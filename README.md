@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div className="px-20 py-20 bg-red-700 absolute w-lvw right-0 ">
+            <div className="grid grid-cols-4 gap-4 p-20">
+              <div className="w-full">
+                <Image
+                  src="https://i.ibb.co/WWQrZJj4/electronics-banner-1.jpg"
+                  alt="Headphone Banner"
+                  width={500}
+                  height={500}
+                />
+              </div>
+              <Image
+                src="https://i.ibb.co/jn6rSYX/mens-banner.jpg"
+                alt="Men's Fashion"
+                width={500}
+                height={500}
+              />
+              <Image
+                src="https://i.ibb.co/bRdmbtwt/womens-banner.jpg"
+                alt="Women's Fashion"
+                width={500}
+                height={500}
+              />
+              <Image
+                src="https://i.ibb.co/jZ3xMMVn/electronics-banner-2.jpg"
+                alt="Mouse Collection"
+                width={500}
+                height={500}
+              />
+            </div>
+          </div>
 
-## Getting Started
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+          import dbConnect from "@/lib/mongoose";
+import { NextResponse } from "next/server";
+import Users from "@/models/users";
 
-To learn more about Next.js, take a look at the following resources:
+const JWT_SECRET = process.env.JWT_SECRET
+export async function POST(req) {
+  try {
+    await dbConnect();
+    const { email, password } = await req.json();
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return NextResponse.json({ message: "invalid Email" }, { status: 401 });
+    }
+    const isMatch = await bcrypt.compare(password, user.hashPassword);
+    if (!isMatch) {
+      return NextResponse.json(
+        { message: "Invalid Passwrod" },
+        { status: 401 }
+      );
+    }
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    const response = NextResponse.json({ message: "login successful" });
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+    return response;
+  } catch (err) {
+    return NextResponse.json(
+      { message: "fetching data error" },
+      { status: 500 }
+    );
+  }
+}
