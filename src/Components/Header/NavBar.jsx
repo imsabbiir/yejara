@@ -13,13 +13,13 @@ function NavBar() {
 
         {/* Dropdown for Electronics */}
         <li className="group relative">
-          <Link href="/electronic_gadgets" className="nav-link">
+          <Link href="/products/electronic_gadgets" className="nav-link">
             electronics
           </Link>
           <ul className="absolute top-full left-0 mt-3 bg-white shadow-lg rounded-lg w-60 p-2 hidden group-hover:block z-50">
             <li>
               <Link
-                href="/electronic_gadgets/mobile_phones"
+                href="/products/electronic_gadgets/mobile_phones"
                 className="block px-4 py-2 text-sm hover:bg-red-50"
               >
                 Mobile Phones
@@ -27,7 +27,7 @@ function NavBar() {
             </li>
             <li>
               <Link
-                href="/electronic_gadgets/laptops_tablets"
+                href="/products/electronic_gadgets/laptops_tablets"
                 className="block px-4 py-2 text-sm hover:bg-red-50"
               >
                 Laptops & Tablets
@@ -35,7 +35,7 @@ function NavBar() {
             </li>
             <li>
               <Link
-                href="/electronic_gadgets/computer_accessories"
+                href="/products/electronic_gadgets/computer_accessories"
                 className="block px-4 py-2 text-sm hover:bg-red-50"
               >
                 Computer Accessories
@@ -43,7 +43,7 @@ function NavBar() {
             </li>
             <li>
               <Link
-                href="/electronic_gadgets/smart_watches"
+                href="/products/electronic_gadgets/smart_watches"
                 className="block px-4 py-2 text-sm hover:bg-red-50"
               >
                 Smart Watches
@@ -53,22 +53,22 @@ function NavBar() {
         </li>
 
         <li>
-          <Link href="/fashion_apparel/mens_clothing" className="nav-link">
+          <Link href="/products/fashion_apparel/mens_clothing" className="nav-link">
             men's
           </Link>
         </li>
         <li>
-          <Link href="/fashion_apparel/womens_clothing" className="nav-link">
+          <Link href="/products/fashion_apparel/womens_clothing" className="nav-link">
             women's
           </Link>
         </li>
         <li>
-          <Link href="/fashion_apparel/jewellery" className="nav-link">
+          <Link href="/products/fashion_apparel/jewellery" className="nav-link">
             jewelry
           </Link>
         </li>
         <li>
-          <Link href="/" className="nav-link">
+          <Link href="/products/" className="nav-link">
             hot offers
           </Link>
         </li>

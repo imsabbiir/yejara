@@ -2,14 +2,20 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     remember: false,
   });
+
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -20,40 +26,45 @@ export default function Page() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.email.value;
-  const password = form.password.value;
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
 
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-  const data = await res.json();
+      const data = await res.json();
 
-  if (res.ok) {
-    alert(data.message);
-    
-  } else {
-    alert(data.error);
-  }
-};
+      if (res.ok) {
+        // ✅ Login successful — redirect user
+        router.push("/");
+      } else {
+        setErrorMsg(data.message || "Login failed");
+      }
+    } catch (error) {
+      setErrorMsg("Something went wrong. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="py-20 flex items-center bg-gray-100 justify-center px-4">
-      <div className="w-full max-w-md p-8 rounded-2xl shadow-md border border-red-200">
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-md border border-red-200 bg-white">
         <h2 className="text-2xl font-bold text-center text-red-500 mb-6">
           Welcome Back!
         </h2>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-red-400"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-red-400">
               Email Address
             </label>
             <input
@@ -69,10 +80,7 @@ export default function Page() {
           </div>
 
           <div className="relative">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-red-400"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-red-400">
               Password
             </label>
             <input
@@ -111,11 +119,18 @@ export default function Page() {
 
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-red-400 text-white font-semibold rounded-lg shadow-md hover:bg-red-500 transition cursor-pointer"
+            disabled={loading}
+            className="w-full py-2 px-4 bg-red-400 text-white font-semibold rounded-lg shadow-md hover:bg-red-500 transition cursor-pointer disabled:opacity-50"
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
+
+        {errorMsg && (
+          <p className="mt-4 text-sm text-center text-red-500 font-medium">
+            {errorMsg}
+          </p>
+        )}
 
         <p className="mt-6 text-center text-sm text-red-400">
           Don't have an account?{" "}

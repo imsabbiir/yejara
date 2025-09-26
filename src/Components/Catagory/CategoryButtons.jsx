@@ -13,8 +13,6 @@ const fetchcategories = async () => {
 export default async function CategoryButtons() {
   const categories = await fetchcategories();
 
-  console.log(categories);
-
   return (
     <div className="w-9/10 mx-auto mt-10 grid grid-cols-4 gap-5">
       {categories?.map((category) => {
@@ -36,7 +34,7 @@ export default async function CategoryButtons() {
               <div className="flex justify-between items-center">
                 <h2 className="text-sm">{category.title}</h2>
               </div>
-              <Link href={category.pageLink} className="text-sm text-red-400">
+              <Link href={`/products/${category.pageLink}`} className="text-sm text-red-400">
                 Show All
               </Link>
             </div>

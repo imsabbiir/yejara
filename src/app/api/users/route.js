@@ -31,6 +31,7 @@ export async function POST(req) {
       hashPassword,
       role: "customer",
       photo: "",
+      address: ""
     });
 
     await newUser.save();

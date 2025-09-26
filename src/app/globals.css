@@ -56,7 +56,20 @@ i{
 .nav-link:hover::after{
     width: 100%;
 }
-
+.custom-dot {
+  position: relative;
+  height: 50px;
+}
+.custom-dot::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #191923;
+  position: absolute;
+  top: 50%;
+  left: -7px;
+  transform: rotate(45deg) translateY(-50%);
+}
 
 .footer{
     background-position: bottom center;

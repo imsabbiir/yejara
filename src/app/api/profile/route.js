@@ -13,9 +13,6 @@ export async function GET() {
     // ✅ Decode and verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log("JWT Token:", token);
-    console.log("User:", { id: decoded.id, email: decoded.email });
-
     return NextResponse.json({
       token,
       user: { id: decoded.id, email: decoded.email },

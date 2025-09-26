@@ -1,24 +1,14 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import Pagination from "@/Components/Pagination";
+import React from "react";
 import ProductVACard from "../Cards/ProductVACard";
-
-export default function ProductList() {
-  const [products, setProducts] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const fetchProducts = async (currentPage) => {
-    const res = await fetch(`/api/products?page=${currentPage}&limit=20`);
-    const data = await res.json();
-    setProducts(data.products);
-    setTotalPages(data.totalPages);
-    setCurrentPage(data.currentPage)
-  };
-
-  useEffect(() => {
-    fetchProducts(currentPage);
-  }, [currentPage]);
+const fetchProducts = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
+    cache: "no-store",
+  });
+  const data = await res.json();
+  return data.products;
+};
+export async function ProductList() {
+  const products = await fetchProducts();
 
   return (
     <div className="mt-10">
@@ -33,7 +23,7 @@ export default function ProductList() {
               productId={product?._id}
               productImage={product.images[0]}
               category={product?.category}
-              ratting={product?.ratting}
+              ratting={product?.rating}
               name={product?.productName}
               regularPrice={product?.variants?.options[0]?.regularPrice}
               offerPrice={product?.variants?.options[0]?.offer?.offerPrice}
@@ -43,11 +33,6 @@ export default function ProductList() {
           );
         })}
       </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={fetchProducts}
-      />
     </div>
   );
 }

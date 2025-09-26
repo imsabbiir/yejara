@@ -45,7 +45,7 @@ function SubCategories() {
               >
                 <ul className="flex flex-col gap-2 py-3 border-t border-[#757575]">
                   {category?.subcategories?.map((subcategory) => (
-                    <Link href={subcategory?.pageLink} key={subcategory?.name}>
+                    <Link href={`/products/${subcategory?.pageLink}`} key={subcategory?.name}>
                       <li className="text-sm font-medium text-[#787878]">
                         {subcategory?.title}
                       </li>

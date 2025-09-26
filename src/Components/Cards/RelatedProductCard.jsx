@@ -24,7 +24,7 @@ function RelatedProductCard({
         />
       </div>
       <div className="">
-        <Link href={`/${categorySlug}/${subCategorySlug}/${porductId}`}>
+        <Link href={`/products/${categorySlug}/${subCategorySlug}/${porductId}`}>
           <h2 className="text-[#353535] font-medium mb-1 hover:text-[#111]">
             {name.length > 17 ? `${name.slice(0, 17)}...` : name}
           </h2>

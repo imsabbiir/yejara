@@ -4,7 +4,6 @@ import Products from "@/models/products";
 
 export async function GET(req, { params }) {
   const { categorySlug, subCategorySlug } = await params;
-  console.log("params from api route sub:", params)
 
   if (!categorySlug || !subCategorySlug) {
     return NextResponse.json(

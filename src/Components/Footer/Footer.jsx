@@ -9,7 +9,7 @@ import Image from "next/image";
 import payment from "@/media/payment.png";
 function Footer() {
   const [categories, setCategories] = useState([]);
-
+  console.log(categories);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -37,7 +37,7 @@ function Footer() {
           <ul className="mt-5">
             {categories?.map((category) => (
               <li key={category._id} className="text-[#a9a9a9] my-1">
-                <Link href={`/category/${category.slug || category._id}`}>
+                <Link href={`/products/${category.pageLink}`}>
                   {category.title}
                 </Link>
               </li>
@@ -58,8 +58,8 @@ function Footer() {
                   className="text-[#a9a9a9] my-1"
                 >
                   <Link
-                    href={`/subcategory/${
-                      subcategory.slug || subcategory.title
+                    href={`/products/${
+                      subcategory.pageLink
                     }`}
                   >
                     {subcategory.title}

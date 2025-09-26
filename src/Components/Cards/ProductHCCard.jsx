@@ -15,7 +15,7 @@ function ProductHCCard({
   return (
     <div className="bg-[#fff] flex gap-4 items-center p-3 border border-[#f0f0f0] rounded-lg">
       <div className="h-20 w-20 bg-[rgba(0,0,0,0.3)] rounded">
-        <Link href={`/${categorySlug}/${subCategorySlug}/${porductId}`}>
+        <Link href={`/products/${categorySlug}/${subCategorySlug}/${porductId}`}>
           <Image
             src={productImage}
             alt={name}
@@ -26,12 +26,12 @@ function ProductHCCard({
         </Link>
       </div>
       <div className="">
-        <Link href={`/${categorySlug}/${subCategorySlug}/${porductId}`}>
+        <Link href={`/products/${categorySlug}/${subCategorySlug}/${porductId}`}>
           <h2 className="text-[#353535] font-medium mb-1 hover:text-[#111]">
             {name.length > 15 ? `${name.slice(0, 15)}...` : name} 
           </h2>
         </Link>
-        <Link href={`/${categorySlug}/${subCategorySlug}`}>
+        <Link href={`/products/${categorySlug}/${subCategorySlug}`}>
           <span className="text-[#757575] hover:text-red-400 hover:underline">
             {subCategory}
           </span>

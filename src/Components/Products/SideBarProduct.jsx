@@ -12,7 +12,7 @@ const fetchProductsBySellers = async () => {
 export default async function SideBarProduct() {
   const products = await fetchProductsBySellers();
   return (
-    <div className="mt-10">
+    <div className="my-10 ">
       <h2 className="uppercase text-[#454545] font-semibold tracking-wider">
         Best Sellers
       </h2>

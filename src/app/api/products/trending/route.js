@@ -7,7 +7,7 @@ export async function GET() {
     await dbConnect(); 
 
     const trendingProducts = await Products.find({
-      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+      createdAt: { $gte: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) },
     })
       .sort({ soldStock: -1 })
       .limit(5);

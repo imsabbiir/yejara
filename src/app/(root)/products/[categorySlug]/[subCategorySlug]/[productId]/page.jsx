@@ -1,6 +1,8 @@
+import CustomerReview from "@/Components/productPage/CustomerReview";
 import ProductDetails from "@/Components/productPage/ProductDetails";
 import ProductSlider from "@/Components/productPage/ProductSlider";
 import RelatedProducts from "@/Components/productPage/RelatedProducts";
+import ReviewLists from "@/Components/productPage/ReviewLists";
 import React from "react";
 
 const fetchProduct = async (id) => {
@@ -16,6 +18,7 @@ const fetchProduct = async (id) => {
   return res.json();
 };
 
+
 export default async function page({ params }) {
   const { categorySlug, subCategorySlug, productId } = params;
   const product = await fetchProduct(productId);
@@ -28,7 +31,10 @@ export default async function page({ params }) {
       </div>
 
       <div className="my-16 grid grid-cols-3">
-        <div className="col-span-2"></div>
+        <div className="col-span-2">
+          <CustomerReview productId={productId}/>
+          <ReviewLists productId={productId}/>
+        </div>
         <div className="col-span-1">
           <h2 className="text-3xl font-semibold text-[#333]">Related Products</h2>
           <RelatedProducts

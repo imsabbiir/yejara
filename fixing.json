@@ -1,9 +1,189 @@
 [
-    {
-        "name": "Sabbir Ahmed",
-        "email": "ilrsabbir@gmail.com",
-        "hashPassword": "0000000000",
-        "role": "customer",
-        "photo": ""
+  {
+    "_id": { "$oid": "686e2a19cb7c39983e3616b9" },
+    "title": "Fashion & Apparel",
+    "name": "fashion_apparel",
+    "image": "https://i.ibb.co/rKpK0v9h/slide-3.png",
+    "pageLink": "/fashion_apparel",
+    "subcategories": [
+      {
+        "title": "Men's Clothing",
+        "name": "mens_clothing",
+        "pageLink": "/fashion_apparel/mens_clothing",
+        "banner": {
+          "image": "https://i.ibb.co/Vp3h3H80/4354039.jpg",
+          "tagline": "Style that speaks for him"
+        }
+      },
+      {
+        "title": "Women's Clothing",
+        "name": "womens_clothing",
+        "pageLink": "/fashion_apparel/womens_clothing",
+        "banner": {
+          "image": "https://i.ibb.co/Vp3h3H80/4354039.jpg",
+          "tagline": "Elegance redefined for her"
+        }
+      },
+      {
+        "title": "Shoes",
+        "name": "shoes",
+        "pageLink": "/fashion_apparel/shoes",
+        "banner": {
+          "image": "https://i.ibb.co/fdN3xZRK/18899175.png",
+          "tagline": "Step into style and comfort"
+        }
+      },
+      {
+        "title": "Accessories",
+        "name": "accessories",
+        "pageLink": "/fashion_apparel/accessories",
+        "banner": {
+          "image": "https://i.ibb.co/d4hVmtyY/black-friday-web-banner-09.png",
+          "tagline": "Complete your look with flair"
+        }
+      },
+      {
+        "title": "Jewellery",
+        "name": "jewellery",
+        "pageLink": "/fashion_apparel/jewellery",
+        "banner": {
+          "image": "https://i.ibb.co/0y0PYjBM/16774.png",
+          "tagline": "Shine with timeless elegance"
+        }
+      }
+    ],
+    "banner": {
+      "image": "https://i.ibb.co/Vp3h3H80/4354039.jpg",
+      "tagline": "Wear your personality"
     }
+  },
+  {
+    "_id": { "$oid": "686e2a19cb7c39983e3616ba" },
+    "title": "Electronic & Gadgets",
+    "name": "electronic_gadgets",
+    "image": "https://i.ibb.co/twx4xpJm/discount-3.webp",
+    "pageLink": "/electronic_gadgets",
+    "subcategories": [
+      {
+        "title": "Mobile Phones",
+        "name": "mobile_phones",
+        "pageLink": "/electronic_gadgets/mobile_phones",
+        "banner": {
+          "image": "",
+          "tagline": "Stay connected in style"
+        }
+      },
+      {
+        "title": "Laptops & Tablets",
+        "name": "laptops_tablets",
+        "pageLink": "/electronic_gadgets/laptops_tablets",
+        "banner": {
+          "image": "https://i.ibb.co/nq9cfjZw/cccadcdf-c2b7-403a-9fbe-34c62edc24ea.png",
+          "tagline": "Power to create, work, and play"
+        }
+      },
+      {
+        "title": "Computer Accessories",
+        "name": "computer_accessories",
+        "pageLink": "/electronic_gadgets/computer_accessories",
+        "banner": {
+          "image": "https://i.ibb.co/bRMtY88j/99cb7731-ed61-434a-9d8a-9fe9d3f384b8.png",
+          "tagline": "Upgrade your digital workspace"
+        }
+      },
+      {
+        "title": "Smart Watches",
+        "name": "smart_watches",
+        "pageLink": "/electronic_gadgets/smart_watches",
+        "banner": {
+          "image": "https://i.ibb.co/4RstqF3Y/18899194.png",
+          "tagline": "Smart fashion on your wrist"
+        }
+      }
+    ],
+    "banner": {
+      "image": "https://i.ibb.co/B0LzTC5/electronics-banner.jpg",
+      "tagline": "Power Up Your Life"
+    }
+  },
+  {
+    "_id": { "$oid": "686e2a19cb7c39983e3616bb" },
+    "title": "Health & Beauty",
+    "name": "health_beauty",
+    "image": "https://i.ibb.co/spDPFX3q/health.png",
+    "pageLink": "/health_beauty",
+    "subcategories": [
+      {
+        "title": "Skincare",
+        "name": "skincare",
+        "pageLink": "/health_beauty/skincare",
+        "banner": {
+          "image": "https://i.ibb.co/0R3x4Xfb/4833256.png",
+          "tagline": "Glow with confidence"
+        }
+      },
+      {
+        "title": "Haircare",
+        "name": "haircare",
+        "pageLink": "/health_beauty/haircare",
+        "banner": {
+          "image": "https://i.ibb.co/Z68vD0z1/4729655.png",
+          "tagline": "Healthy hair, happy you"
+        }
+      },
+      {
+        "title": "Wellness",
+        "name": "wellness",
+        "pageLink": "/health_beauty/wellness",
+        "banner": {
+          "image": "https://i.ibb.co/spDPFX3q/health.png",
+          "tagline": "Feel good, live better"
+        }
+      }
+    ],
+    "banner": {
+      "image": "https://i.ibb.co/GvG1FRQQ/health.png",
+      "tagline": "Your journey to self-care starts here"
+    }
+  },
+  {
+    "_id": { "$oid": "686e2a19cb7c39983e3616bc" },
+    "title": "Home & Kitchen",
+    "name": "home_kitchen",
+    "image": "https://i.ibb.co/9kkMZsKn/kitchen.png",
+    "pageLink": "/home_kitchen",
+    "subcategories": [
+      {
+        "title": "Furniture",
+        "name": "furniture",
+        "pageLink": "/home_kitchen/furniture",
+        "banner": {
+          "image": "https://i.ibb.co/2YjdvjLb/Furniture-Facebook-Cover-Banner-01.png",
+          "tagline": "Furnish your dream space"
+        }
+      },
+      {
+        "title": "Appliances",
+        "name": "appliances",
+        "pageLink": "/home_kitchen/appliances",
+        "banner": {
+          "image": "https://i.ibb.co/RkBYVYWZ/Black-Friday-Facebook-Cover-Banner-15.png",
+          "tagline": "Smart solutions for daily living"
+        }
+      },
+      {
+        "title": "Decor",
+        "name": "decor",
+        "pageLink": "/home_kitchen/decor",
+        "banner": {
+          "image": "https://i.ibb.co/9mhbwhkm/7938398.png",
+          "tagline": "Add charm to every corner"
+        }
+      }
+    ],
+    "banner": {
+      "image": "https://i.ibb.co/RkBYVYWZ/Black-Friday-Facebook-Cover-Banner-15.png",
+      "tagline": "Make every space feel like home"
+    }
+  }
 ]

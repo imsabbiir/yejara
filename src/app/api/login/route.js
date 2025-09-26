@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/mongoose";
 import Users from "@/models/users";
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 export async function POST(request) {
   try {
@@ -23,13 +23,21 @@ export async function POST(request) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    const response = NextResponse.json({message:"login successful"});
+    const response = NextResponse.json({
+      message: "login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        image: user.image || null,
+      },
+    });
     response.cookies.set("token", token, {
-        httpOnly:true,
-        secure:true,
-        path: '/',
-        maxAge: 60*60*24*7,
-    })
+      httpOnly: true,
+      secure: true,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
     return response;
   } catch (error) {
     return NextResponse.json({ message: "login faild" }, { status: 500 });
