@@ -14,10 +14,11 @@ export const metadata = {
   title: "EpicDeals",
   description: "",
 };
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+    <html lang="en" className={poppins.variable}>
+      <body className="antialiased">
         <WishlistProvider>
           <CartProvider>{children}</CartProvider>
         </WishlistProvider>
