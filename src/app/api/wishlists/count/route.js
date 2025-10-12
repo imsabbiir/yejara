@@ -1,5 +1,4 @@
 import dbConnect from "@/lib/mongoose";
-import { NextResponse } from "next/server";
 import Wishlists from "@/models/wishlists";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
@@ -13,7 +12,7 @@ export async function GET() {
     const token = cookieStore.get("token")?.value;
 
     if (!token) {
-      return NextResponse.json({ count: 0 }, { status: 401 });
+      return new Response(JSON.stringify({ count: 0 }), { status: 200 });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -23,9 +22,9 @@ export async function GET() {
       userId: new mongoose.Types.ObjectId(userId),
     });
 
-    return NextResponse.json({ count });
+    return new Response(JSON.stringify({ count }), { status: 200 });
   } catch (error) {
-    console.error("Wishlist count fetch error:", error);
-    return NextResponse.json({ count: 0 }, { status: 500 });
+    console.error("Wishlist count error:", error);
+    return new Response(JSON.stringify({ count: 0 }), { status: 500 });
   }
 }

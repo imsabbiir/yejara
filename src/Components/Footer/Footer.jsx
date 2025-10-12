@@ -7,9 +7,10 @@ import { IoLocationOutline } from "react-icons/io5";
 import { BsTelephone } from "react-icons/bs";
 import Image from "next/image";
 import payment from "@/media/payment.png";
+
 function Footer() {
   const [categories, setCategories] = useState([]);
-  console.log(categories);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,10 +26,10 @@ function Footer() {
 
   return (
     <div
-      className="w-full pt-10 pb-50 footer bg-cover bg-center"
+      className="w-full pt-10 pb-20 footer bg-cover bg-center"
       style={{ backgroundImage: `url(${footer.src})` }}
     >
-      <div className="w-9/10 mx-auto grid grid-cols-5 gap-8 pb-10 border-b border-[#555555]">
+      <div className="w-9/10 mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 pb-10 border-b border-[#555555]">
         {/* Categories */}
         <div className="col-span-1">
           <h2 className="uppercase w-fit pb-2 text-white font-semibold text-lg relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:h-0.5 after:bg-red-400">
@@ -50,18 +51,14 @@ function Footer() {
           <h2 className="uppercase w-fit pb-2 text-white font-semibold text-lg relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:h-0.5 after:bg-red-400">
             Sub-Categories
           </h2>
-          <ul className="mt-5 grid grid-cols-3">
+          <ul className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-x-5">
             {categories?.map((category) =>
               category?.subcategories?.map((subcategory, index) => (
                 <li
                   key={`${category._id}-${index}`}
                   className="text-[#a9a9a9] my-1"
                 >
-                  <Link
-                    href={`/products/${
-                      subcategory.pageLink
-                    }`}
-                  >
+                  <Link href={`/products/${subcategory.pageLink}`}>
                     {subcategory.title}
                   </Link>
                 </li>
@@ -70,14 +67,14 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Reserved Space */}
+        {/* Contact */}
         <div className="col-span-1">
           <h2 className="uppercase w-fit pb-2 text-white font-semibold text-lg relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:h-0.5 after:bg-red-400">
-            contact
+            Contact
           </h2>
           <div className="mt-5 flex flex-col gap-3">
             <div className="flex gap-3 text-[#a9a9a9]">
-              <IoLocationOutline className="text-5xl leading-0 h-fit" />
+              <IoLocationOutline className="text-3xl md:text-5xl leading-0 h-fit" />
               <address className="text-sm">
                 Birabo, Rupganj, Narayanganj, Dhaka, Bangladesh
               </address>
@@ -93,6 +90,8 @@ function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Bottom Section */}
       <div className="pt-10">
         <div className="flex flex-col gap-3 items-center justify-center">
           <Image
@@ -100,9 +99,11 @@ function Footer() {
             alt="payment method"
             width={2500}
             height={250}
-            className="w-1/4"
+            className="w-2/3 sm:w-1/4"
           />
-          <span className="text-[#757575] capitalize">Copyright Sabbir All rights Reserved</span>
+          <span className="text-[#757575] capitalize text-center text-sm">
+            Copyright Sabbir All rights Reserved
+          </span>
         </div>
       </div>
     </div>

@@ -1,49 +1,16 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { PiHeadsetFill } from "react-icons/pi";
 import { CiShoppingCart, CiHeart } from "react-icons/ci";
 import { IoSearchOutline, IoCamera } from "react-icons/io5";
 import UserMenu from "./UserMenu";
 import Link from "next/link";
-import Logo from "@/media/logo.png"
+import Logo from "@/media/logo.png";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 function MiddleHeader() {
-  const [helpIconOpen, setHelpIconOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-  const [loveCount, setLoveCount] = useState(0);
-
-  const fetchCounts = async () => {
-    try {
-      const cartRes = await fetch("/api/cart-items/count");
-      const cartData = await cartRes.json();
-      setCartCount(cartData.count);
-
-      const wishRes = await fetch("/api/wishlists/count");
-      const wishData = await wishRes.json();
-      setLoveCount(wishData.count);
-    } catch (error) {
-      console.error("Failed to fetch counts:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCounts();
-
-    const onCartUpdated = () => fetchCounts();
-    const onWishlistUpdated = () => fetchCounts();
-
-    window.addEventListener("cartUpdated", onCartUpdated);
-    window.addEventListener("wishlistUpdated", onWishlistUpdated);
-
-    return () => {
-      window.removeEventListener("cartUpdated", onCartUpdated);
-      window.removeEventListener("wishlistUpdated", onWishlistUpdated);
-    };
-  }, []);
-
-  const handleHelpChange = () => {
-    setHelpIconOpen(!helpIconOpen);
-  };
+  const { cart } = useCart();
+  const { wishlist } = useWishlist();
 
   return (
     <div className="bg-[#fff7f9] py-5">
@@ -55,10 +22,11 @@ function MiddleHeader() {
               alt="EpicDeals"
               width={1500}
               height={1500}
-              className="oject-contain"
+              className="object-contain"
             />
           </Link>
         </div>
+
         <div className="search md:flex relative w-full mx-10 hidden">
           <input
             type="text"
@@ -70,31 +38,31 @@ function MiddleHeader() {
             <IoSearchOutline className="cursor-pointer text-xl" />
           </div>
         </div>
-        <div className="flex gap-5 items-center text-4xl ">
+
+        <div className="flex gap-5 items-center text-4xl">
           <UserMenu />
+
+          {/* Wishlist Icon */}
           <div className="relative">
-            <Link href={"/user/wishlists"}>
+            <Link href={"/wishlists"}>
               <CiHeart />
             </Link>
-            {loveCount ? (
-              <div className="text-xs bg-[#ff8f9c] rounded-full w-4 h-4.5 flex justify-center items-center overflow-hidden absolute right-0 top-0 -translate-y-1/2 translate-x-1/2">
-                <span className="text-white">{loveCount}</span>
+            
+              <div className="absolute -top-2 -right-2 bg-[#ff8f9c] text-white text-[10px] w-4 h-5 flex justify-center items-center rounded-full">
+                {wishlist.length}
               </div>
-            ) : (
-              ""
-            )}
+            
           </div>
+
+          {/* Cart Icon */}
           <div className="relative">
-            <Link href={"/user/add-to-cart"}>
+            <Link href={"/cart"}>
               <CiShoppingCart />
             </Link>
-            {cartCount ? (
-              <div className="text-xs bg-[#ff8f9c] rounded-full w-4 h-4.5 flex justify-center items-center overflow-hidden absolute right-0 top-0 -translate-y-1/2 translate-x-1/2">
-                <span className="text-white">{cartCount}</span>
+
+              <div className="absolute -top-2 -right-2 bg-[#ff8f9c] text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
+                {cart.length}
               </div>
-            ) : (
-              ""
-            )}
           </div>
         </div>
       </div>

@@ -26,34 +26,38 @@ export default function Page() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg("");
+  e.preventDefault();
+  setLoading(true);
+  setErrorMsg("");
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
+      credentials: "include", // 🔥 important so cookie gets saved
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok) {
-        // ✅ Login successful — redirect user
-        router.push("/");
-      } else {
-        setErrorMsg(data.message || "Login failed");
-      }
-    } catch (error) {
-      setErrorMsg("Something went wrong. Try again later.");
-    } finally {
-      setLoading(false);
+    if (res.ok) {
+      // 🔥 Trigger UserMenu to re-fetch user immediately
+      window.dispatchEvent(new Event("userLogin"));
+
+      // Redirect
+      router.push("/");
+    } else {
+      setErrorMsg(data.message || "Login failed");
     }
-  };
+  } catch (error) {
+    setErrorMsg("Something went wrong. Try again later.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="py-20 flex items-center bg-gray-100 justify-center px-4">

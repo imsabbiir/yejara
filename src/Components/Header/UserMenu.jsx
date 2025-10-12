@@ -13,7 +13,6 @@ function UserMenu() {
   const menuRef = useRef(null);
   const router = useRouter();
 
-  // Fetch user info from /api/me
   const fetchUser = async () => {
     try {
       const res = await fetch("/api/me", { credentials: "include" });
@@ -28,11 +27,11 @@ function UserMenu() {
 
   useEffect(()=>{
     fetchUser();
-  //   const handleUserLogin = () => fetchUser();
-  //   window.addEventListener("userLogin", handleUserLogin);
+    const handleUserLogin = () => fetchUser();
+    window.addEventListener("userLogin", handleUserLogin);
 
-  // return () => window.removeEventListener("userLogin", handleUserLogin);
-  })
+  return () => window.removeEventListener("userLogin", handleUserLogin);
+  }, [])
 
   // Close menu when clicking outside
   useEffect(() => {

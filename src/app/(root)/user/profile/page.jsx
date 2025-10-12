@@ -34,16 +34,15 @@ function Page() {
     getUser();
   }, []);
 
-
-  if (!user) return <p>Loading user info...</p>;
+  if (!user) return <p className="text-center py-10 text-gray-500">Loading user info...</p>;
 
   return (
-    <div className="p-5">
-      
+    <div className="p-5 sm:p-8 lg:p-10">
+      {/* Title Section */}
       <Title />
 
-      <div className="grid grid-cols-3 gap-7">
-
+      {/* Profile & Bio Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-7 mt-7">
         <Profile
           user={user}
           setSelectedImage={setSelectedImage}
@@ -56,13 +55,15 @@ function Page() {
           formData={formData}
           setFormData={setFormData}
         />
-
       </div>
 
-      <ChangePassword />
+      {/* Other Settings */}
+      <div className="mt-10 md:space-y-10">
+        <ChangePassword />
+        <DeleteAccount />
+      </div>
 
-      <DeleteAccount />
-
+      {/* Preview Modal */}
       <PreviewProfile
         showImageModal={showImageModal}
         setShowImageModal={setShowImageModal}
@@ -70,7 +71,6 @@ function Page() {
         setSelectedImage={setSelectedImage}
         setUser={setUser}
       />
-
     </div>
   );
 }

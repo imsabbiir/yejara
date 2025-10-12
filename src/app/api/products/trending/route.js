@@ -4,19 +4,21 @@ import Products from "@/models/products";
 
 export async function GET() {
   try {
-    await dbConnect(); 
+    await dbConnect();
 
-    const trendingProducts = await Products.find({
-      createdAt: { $gte: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) },
-    })
+    const trendingProducts = await Products.find()
       .sort({ soldStock: -1 })
       .limit(5);
+
+    console.log("Trending Products:", trendingProducts);
+
     return NextResponse.json(trendingProducts);
   } catch (error) {
-    console.error("Category fetch error:", error);
+    console.error("Trending fetch error:", error);
     return NextResponse.json(
-      { message: "fetching Category Data failed" },
+      { message: "Fetching trending products failed" },
       { status: 500 }
     );
   }
 }
+

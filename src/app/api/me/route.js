@@ -1,4 +1,3 @@
-// app/api/me/route.js
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import dbConnect from "@/lib/mongoose";
