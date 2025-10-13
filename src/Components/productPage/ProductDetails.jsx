@@ -1,7 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-
+import { useCart } from '@/context/CartContext';
+import toast from 'react-hot-toast';
 const ProductDetails = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState(product.variants?.colorVariants?.[0]);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -12,12 +13,31 @@ const ProductDetails = ({ product }) => {
     ? selectedVariant.offer.offerPrice
     : selectedVariant?.regularPrice;
 
+  const { addToCart, cart } = useCart(); // use the cart context
+
+  const handleAddToCart = () => {
+  addToCart({
+    productId: product._id,
+    productImage: product.images?.[0],
+    name: product.productName,
+    category: product.category,
+    regularPrice: selectedVariant?.regularPrice,
+    offerPrice: selectedVariant?.offer?.offerStatus
+      ? selectedVariant.offer.offerPrice
+      : selectedVariant?.regularPrice,
+    categorySlug: product.categorySlug,
+    subCategorySlug: product.subCategorySlug,
+    selectedColor,
+    selectedVariant: selectedVariant?.type,
+  });
+
+  toast.success('Product added to cart!');
+};
+
   return (
     <div className="w-full max-w-xl">
       {/* Product Title */}
-      <h1 className="text-3xl font-semibold mb-2 text-[#333]">
-        {product.productName}
-      </h1>
+      <h1 className="text-3xl font-semibold mb-2 text-[#333]">{product.productName}</h1>
 
       {/* Description */}
       <p className="text-gray-500 mb-4">{product.description}</p>
@@ -80,7 +100,10 @@ const ProductDetails = ({ product }) => {
 
       {/* Add to Cart Button */}
       <div className="mt-6">
-        <button className="bg-[#ff8f9c] hover:bg-red-400 transition text-white px-6 py-2 rounded-lg font-semibold">
+        <button
+          className="bg-[#ff8f9c] hover:bg-red-400 transition text-white px-6 py-2 rounded-lg font-semibold"
+          onClick={handleAddToCart}
+        >
           Add to Cart
         </button>
       </div>

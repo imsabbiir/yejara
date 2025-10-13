@@ -53,36 +53,43 @@ function ProductVACard({
         />
 
         {/* Wishlist and Cart Buttons */}
-        <div className="h-full px-4 absolute top-0 -right-full flex flex-col gap-3 justify-center items-center group-hover:right-0 group-hover:transition-all duration-300 ease-in-out">
-          <div
-            className={`h-8 w-8 rounded flex justify-center items-center text-lg cursor-pointer bg-white transition-colors duration-300 ${
-              isInWishlist ? "text-red-500" : "text-black"
-            }`}
-            onClick={handleWishlistClick}
-          >
-            <CiHeart />
-          </div>
+        <div
+  className={`
+    h-full px-4 absolute top-0 right-0 flex flex-col gap-3 justify-center items-center
+    transition-all duration-300 ease-in-out
+    md:-right-full md:group-hover:right-0
+    bg-[#0000007b] md:bg-transparent
+  `}
+>
+  <div
+    className={`h-8 w-8 rounded flex justify-center items-center text-lg cursor-pointer bg-white transition-colors duration-300 ${
+      isInWishlist ? "text-red-500" : "text-black"
+    }`}
+    onClick={handleWishlistClick}
+  >
+    <CiHeart />
+  </div>
 
-          <div
-            className={`border border-[#ededed] h-8 w-8 bg-white rounded flex justify-center items-center text-lg cursor-pointer transition-colors duration-300 ${
-              isInCart ? "text-green-500" : "text-black"
-            }`}
-            onClick={() =>
-              addToCart({
-                productId,
-                productImage,
-                name,
-                category,
-                regularPrice,
-                offerPrice,
-                categorySlug,
-                subCategorySlug,
-              })
-            }
-          >
-            <CiShoppingCart />
-          </div>
-        </div>
+  <div
+    className={`border border-[#ededed] h-8 w-8 bg-white rounded flex justify-center items-center text-lg cursor-pointer transition-colors duration-300 ${
+      isInCart ? "text-green-500" : "text-black"
+    }`}
+    onClick={() =>
+      addToCart({
+        productId,
+        productImage,
+        name,
+        category,
+        regularPrice,
+        offerPrice,
+        categorySlug,
+        subCategorySlug,
+      })
+    }
+  >
+    <CiShoppingCart />
+  </div>
+</div>
       </div>
 
       {/* Product Info */}
