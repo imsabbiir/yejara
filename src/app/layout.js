@@ -11,8 +11,13 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "EpicDeals",
+  title: "yejara",
   description: "",
+  icons: {
+    icon: "/logo.ico", // Path inside /public
+    shortcut: "/logo.ico",
+    apple: "/logo.png", // Optional for Apple devices
+  },
 };
 
 export default function RootLayout({ children }) {
