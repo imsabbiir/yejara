@@ -17,8 +17,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={poppins.variable}>
-      <body className="antialiased">
+    <html lang="en">
+      <body className={`${poppins.variable} antialiased`}>
         <WishlistProvider>
           <CartProvider>{children}</CartProvider>
         </WishlistProvider>
