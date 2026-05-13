@@ -1,18 +1,16 @@
 "use client";
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 export default function page() {
-  const [showPassword, setShowPassword] = useState(false);
+    const route = useRouter()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [err, setErr] = useState("");
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,7 +22,7 @@ export default function page() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
+    setErr("");
 
     try {
       const res = await fetch("/api/users", {
@@ -35,96 +33,103 @@ export default function page() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Failed to sign up");
+      if (!res.ok) throw new Error(data.err || "Failed to sign up");
 
-      setMessage("✅ Account created successfully!");
+      setErr("✅ Account created successfully!");
       setFormData({ name: "", email: "", password: "" });
-    } catch (err) {
-      setMessage(`❌ ${err.message}`);
+      route.push("/login")
+    } catch (error) {
+      setErr(`❌ setErr("Something went wrong. Try again later.");`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-red-50 px-4">
-      <div className="w-full max-w-md bg-gray-50 p-8 rounded-2xl shadow-md border border-red-200">
-        <h2 className="text-2xl font-bold text-center text-red-400 mb-6">
-          Create Your Account
-        </h2>
-
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-red-400">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-red-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-400 focus:border-red-400"
-              placeholder="Your Name"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-red-400">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-red-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-400 focus:border-red-400"
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-
-          <div className="relative">
-            <label htmlFor="password" className="block text-sm font-medium text-red-400">
-              Password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-red-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-400 focus:border-red-400 pr-10"
-              placeholder="Create a password"
-              required
-            />
-            <div
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 cursor-pointer text-red-400"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 bg-red-400 text-white font-semibold rounded-lg shadow-md hover:bg-red-500 transition cursor-pointer"
-          >
-            {loading ? "Signing Up..." : "Sign Up"}
-          </button>
-        </form>
-
-        {message && (
-          <p className="mt-4 text-center text-sm text-red-500">{message}</p>
+    <div className="max-w-[1100px] mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+      <div className="hidden md:block">
+        <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#ff5b4e] mb-3">
+          Join yejara
+        </p>
+        <h1 className="font-fraunces text-6xl leading-[1] mb-6">
+          Become
+          <br />a member.
+        </h1>
+        <ul className="space-y-2 text-sm text-[#5e534a] max-w-sm">
+          <li>✦ Free shipping on first order</li>
+          <li>✦ Track every shipment in real time</li>
+          <li>✦ Early access to drops</li>
+        </ul>
+      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-3xl p-8 shadow border border-[#dfd6cb] space-y-5"
+      >
+        <h2 className="font-fraunces text-3xl">Create account</h2>
+        {err && (
+          <p className="text-sm text-[#ee0f1f] bg-[#ee0f1f]/10 rounded-lg p-3">
+            {err}
+          </p>
         )}
-
-        <p className="mt-6 text-center text-sm text-red-400">
-          Already have an account?{" "}
-          <Link href="/login" className="text-red-500 hover:underline font-medium">
+        <div className="space-y-1.5">
+          <label className="text-xs font-mono uppercase tracking-widest">
+            Full Name
+          </label>
+          <input
+            value={formData.name}
+            id="name"
+            onChange={handleChange}
+            type="text"
+            placeholder="Your email"
+            required
+            className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-mono uppercase tracking-widest">
+            Email
+          </label>
+          <input
+            value={formData.email}
+            id="email"
+            onChange={handleChange}
+            type="email"
+            placeholder="Your email"
+            required
+            className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-mono uppercase tracking-widest">
+            Password (Min 6)
+          </label>
+          <input
+            value={formData.password}
+            id="password"
+            onChange={handleChange}
+            type="password"
+            placeholder="Password"
+            required
+            className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#ff5b4e] text-[#d9d3c7] rounded-full py-3.5 text-sm font-medium hover:bg-[#17100b] transition"
+        >
+          {loading ? "Creating Account..." : "Create Account"}
+        </button>
+        <p className="text-sm text-center text-[#5e534a]">
+          Already a member?{" "}
+          <Link
+            href="/login"
+            className="text-[#17100b] underline underline-offset-4"
+          >
             Sign in
           </Link>
         </p>
-      </div>
+      </form>
     </div>
   );
 }

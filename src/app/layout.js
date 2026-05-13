@@ -16,7 +16,6 @@ export const metadata = {
   icons: {
     icon: "/logo.ico", // Path inside /public
     shortcut: "/logo.ico",
-    apple: "/logo.png", // Optional for Apple devices
   },
 };
 

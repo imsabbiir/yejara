@@ -1,32 +1,71 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { BsShieldLockFill } from "react-icons/bs";
-import Image from "next/image";
-import bkash from "@/media/bkash.png";
-import nagad from "@/media/nagad.png";
-import card from "@/media/card.png";
-import wallet from "@/media/wallet.png";
+import { useState, useEffect, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
+import {
+  Smartphone,
+  CreditCard,
+  Wallet,
+  Truck,
+  ShieldCheck,
+  MapPin,
+  Phone,
+  Lock,
+} from "lucide-react";
+import { Elements } from "@stripe/react-stripe-js";
+import { stripePromise } from "@/lib/stripe-client";
+import CheckoutForm from "@/components/CheckoutForm";
+import Link from "next/link";
+import Image from "next/image";
 
-export default function CheckoutPage() {
-  const { cart, clearCart } = useCart();
-  const [selectedPayment, setSelectedPayment] = useState("card");
-  const [loading, setLoading] = useState(false);
+const paymentOptions = [
+  {
+    id: "bkash",
+    label: "bKash",
+    description: "Pay securely with your bKash wallet",
+    icon: Smartphone,
+    accent: "bg-[oklch(0.62_0.21_0)] text-white",
+  },
+  {
+    id: "nagad",
+    label: "Nagad",
+    description: "Fast mobile payment via Nagad",
+    icon: Wallet,
+    accent: "bg-[oklch(0.65_0.18_40)] text-white",
+  },
+  {
+    id: "card",
+    label: "Credit / Debit Card",
+    description: "Visa, Mastercard, Amex accepted",
+    icon: CreditCard,
+    accent: "bg-[#0f172b] text-white",
+  },
+  {
+    id: "cod",
+    label: "Cash on Delivery",
+    description: "Pay in cash when your order arrives",
+    icon: Truck,
+    accent: "bg-[oklch(0.55_0.15_150)] text-white",
+  },
+];
+
+function page() {
+  const { cart } = useCart();
+  const [products, setProducts] = useState([]);
   const [user, setUser] = useState(null);
-  const [address, setAddress] = useState({
-    village: "",
+  const [method, setMethod] = useState("card");
+  const [form, setForm] = useState({
+    name: "",
     district: "",
-    policeStation: "",
-    postalCode: "",
+    thana: "",
+    area: "",
+    postal: "",
     phone: "",
+    paymentPhone: "",
+    trxId: "",
+    cardNumber: "",
+    expiry: "",
+    cvc: "",
   });
-
-  const [cardNumbers, setCardNumbers] = useState(["", "", "", ""]);
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [cardName, setCardName] = useState("");
-  const [errors, setErrors] = useState({});
-  const cardRefs = [useRef(), useRef(), useRef(), useRef()];
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,253 +77,216 @@ export default function CheckoutPage() {
         console.error("Error fetching user:", err);
       }
     };
+
     fetchUser();
   }, []);
 
-  const subtotal = cart.reduce(
-    (sum, item) => sum + (parseFloat(item.offerPrice) || parseFloat(item.regularPrice)) * item.quantity,
-    0
+  useEffect(() => {
+    if (!cart) return;
+
+    const mappedProducts = cart.map((item, index) => ({
+      id: index,
+      name: item.name,
+      variant: item.variant || "",
+      price: parseFloat(item.offerPrice) || parseFloat(item.regularPrice) || 0,
+      qty: item.quantity,
+      image: item.productImage,
+    }));
+
+    setProducts(mappedProducts);
+  }, [cart]);
+
+  const subtotal = useMemo(
+      () =>
+        cart.reduce(
+          (s, i) => s + (i.offerPrice || i.regularPrice) * i.quantity,
+          0,
+        ),
+      [cart],
+    );
+  const shipping = subtotal > 2500 ? 0 : 120;
+  const tax = +(subtotal * 0.08).toFixed(2);
+  const total = subtotal + shipping + tax;
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleOrder = () => {
+    const orderData = {
+      userId: user?._id,
+      items: products,
+      shipping: form,
+      paymentMethod: payment,
+      totalAmount: total,
+    };
+
+    console.log("ORDER DATA:", orderData);
+
+    alert("Order Placed Successfully ✅");
+  };
+
+  const Field = (props) => (
+    <label className="block">
+      <span className="text-xs font-mono uppercase tracking-widest text-[#5e534a] mb-1.5 block">
+        {props.label}
+      </span>
+      <input
+        {...props}
+        className="w-full bg-white border border-[#dfd6cb] rounded-full px-4 py-3 text-sm outline-none focus:border-[#17100b] transition"
+      />
+    </label>
   );
-  const shipping = subtotal > 55 ? 0 : 5;
-  const total = subtotal + shipping;
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setAddress((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const handleCardChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newValues = [...cardNumbers];
-    newValues[index] = value.slice(0, 4);
-    setCardNumbers(newValues);
-    if (value.length === 4 && index < 3) cardRefs[index + 1].current.focus();
-  };
-
-  const handlePaste = (e) => {
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
-    if (pasted.length === 16) {
-      e.preventDefault();
-      const parts = pasted.match(/.{1,4}/g);
-      setCardNumbers(parts);
-      cardRefs[3].current.focus();
-    }
-  };
-
-  const isValidPostalCode = (code) => /^\d{4}$/.test(code);
-  const isValidBDPhone = (phone) => /^(01[3-9]\d{8})$/.test(phone);
-
-  const handleCheckout = async () => {
-    const newErrors = {};
-    if (!address.village) newErrors.village = "Village is required";
-    if (!address.district) newErrors.district = "District is required";
-    if (!address.policeStation) newErrors.policeStation = "Police Station is required";
-    if (!address.postalCode) newErrors.postalCode = "Postal Code is required";
-    else if (!isValidPostalCode(address.postalCode))
-      newErrors.postalCode = "Enter a valid 4-digit postal code";
-    if (!address.phone) newErrors.phone = "Phone Number is required";
-    else if (!isValidBDPhone(address.phone))
-      newErrors.phone = "Enter a valid Bangladeshi phone number";
-
-    if (selectedPayment === "card") {
-      if (cardNumbers.some((n) => n.length < 4)) newErrors.cardNumbers = "Complete your card number";
-      if (!expiry) newErrors.expiry = "Expiry date is required";
-      if (!cvv) newErrors.cvv = "CVV is required";
-      if (!cardName) newErrors.cardName = "Cardholder name is required";
-    }
-
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
-
-    if (!user?._id) {
-      alert("⚠️ Please log in before placing an order.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const orderItems = cart.map((item) => ({
-        productId: item.productId,
-        title: item.name,
-        price: parseFloat(item.offerPrice) || parseFloat(item.regularPrice),
-        quantity: item.quantity,
-        image: item.productImage,
-      }));
-
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user._id,
-          items: orderItems,
-          address,
-          paymentMethod: selectedPayment,
-          totalAmount: total,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        alert("✅ Order placed successfully!");
-        clearCart?.();
-      } else {
-        alert("❌ Failed to place order. Please try again.");
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert("Something went wrong during checkout.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  if (cart.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-24 text-center">
+        <h1 className="font-fraunces text-4xl mb-4">Nothing to check out</h1>
+        <p className="text-[#5e534a] mb-8">Your bag is empty.</p>
+        <Link
+          href="/"
+          className="inline-block bg-[#17100b] text-[#d9d3c7] rounded-full px-6 py-3 text-sm"
+        >
+          Browse the shop
+        </Link>
+      </div>
+    );
+  }
   return (
-    <div className="w-full py-10 bg-gray-100 min-h-screen">
-      <div className="w-[95%] md:w-[90%] lg:w-[85%] mx-auto flex flex-col lg:flex-row gap-6">
+    <div className="px-6 py-12">
+      <h1 className="font-fraunces text-5xl mb-10">Checkout</h1>
+      <form className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 space-y-10">
+          {/* Contact */}
+          <section>
+            <h2 className="font-fraunces text-2xl mb-5">Contact</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="Full name" required />
+              <Field label="Email" type="email" required />
+            </div>
+          </section>
 
-        {/* LEFT SIDE */}
-        <div className="lg:w-2/5 bg-[#1e1e28] text-white rounded-2xl p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Delivery Address</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {["village", "policeStation", "district", "postalCode"].map((field) => (
-                <div key={field}>
-                  <input
-                    type="text"
-                    name={field}
-                    value={address[field]}
-                    onChange={handleAddressChange}
-                    placeholder={field.replace(/([A-Z])/g, " $1")}
-                    className={`bg-transparent border rounded-md px-3 py-2 w-full ${
-                      errors[field] ? "border-red-500" : "border-gray-500 focus:border-red-400"
-                    }`}
-                  />
-                  {errors[field] && <p className="text-red-400 text-xs mt-1">{errors[field]}</p>}
-                </div>
+          {/* Shipping */}
+          <section>
+            <h2 className="font-fraunces text-2xl mb-5">Shipping address</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <Field label="Street address" required />
+              </div>
+              <Field label="City" required />
+              <Field label="ZIP / Postal" required />
+            </div>
+          </section>
+
+          {/* Payment */}
+          <section>
+            <h2 className="font-fraunces text-2xl mb-5">Payment</h2>
+            <div className="flex gap-3 mb-5">
+              {["card", "cod"].map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  className={`px-5 py-2.5 rounded-full text-sm border-2 transition ${method === m ? "border-ink bg-ink text-cream" : "border-[#dfd6cb]"}`}
+                >
+                  {m === "card" ? "Credit Card" : "Cash on Delivery"}
+                </button>
               ))}
             </div>
-            <div className="mt-3">
-              <input
-                type="text"
-                name="phone"
-                value={address.phone}
-                onChange={handleAddressChange}
-                placeholder="Phone Number"
-                className={`bg-transparent border rounded-md px-3 py-2 w-full ${
-                  errors.phone ? "border-red-500" : "border-gray-500 focus:border-red-400"
-                }`}
-              />
-              {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
-            </div>
-          </div>
-
-          <div className="mt-6 border-t border-gray-500 pt-4 text-sm">
-            <div className="flex justify-between mb-1">
-              <p>Items ({cart.length})</p>
-              <p>BDT {subtotal.toFixed(2)}</p>
-            </div>
-            <div className="flex justify-between mb-1">
-              <p>Shipping</p>
-              <p>BDT {shipping.toFixed(2)}</p>
-            </div>
-            <div className="flex justify-between font-bold text-red-400 mt-2">
-              <p>TOTAL</p>
-              <p>BDT {total.toFixed(2)}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="lg:w-3/5 bg-white rounded-2xl p-6 shadow-lg">
-          <h2 className="text-gray-800 font-semibold text-2xl mb-4">
-            Choose a Payment Method
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            {[
-              { id: "bkash", name: "Bkash", img: bkash },
-              { id: "nagad", name: "Nagad", img: nagad },
-              { id: "card", name: "Credit Card", img: card },
-              { id: "cod", name: "Cash On Delivery", img: wallet },
-            ].map((method) => (
-              <button
-                key={method.id}
-                onClick={() => setSelectedPayment(method.id)}
-                className={`border rounded-lg p-3 flex flex-col items-center transition ${
-                  selectedPayment === method.id ? "border-red-400 bg-red-50" : "border-gray-300 hover:border-red-300"
-                }`}
-              >
-                <Image src={method.img} alt={method.name} className="w-7 h-7" />
-                <p className="text-xs font-semibold mt-2 text-gray-700">{method.name}</p>
-              </button>
-            ))}
-          </div>
-
-          {/* Credit Card */}
-          {selectedPayment === "card" && (
-            <div className="mb-4">
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                {cardNumbers.map((num, idx) => (
-                  <input
-                    key={idx}
-                    ref={cardRefs[idx]}
-                    type="text"
-                    maxLength={4}
-                    value={num}
-                    onChange={(e) => handleCardChange(idx, e.target.value)}
-                    onPaste={idx === 0 ? handlePaste : undefined}
-                    placeholder="0000"
-                    className={`border-b px-2 py-1 text-center ${
-                      errors.cardNumbers ? "border-red-500" : "border-gray-400 focus:border-red-400"
-                    }`}
+            {method === "card" && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-3">
+                  <Field
+                    label="Card number"
+                    placeholder="1234 5678 9012 3456"
                   />
-                ))}
+                </div>
+                <div className="md:col-span-2">
+                  <Field label="Expiry" placeholder="MM/YY" />
+                </div>
+                <Field label="CVC" placeholder="123" />
               </div>
-              {errors.cardNumbers && <p className="text-red-400 text-xs mb-2">{errors.cardNumbers}</p>}
-              <div className="flex flex-col sm:flex-row gap-4 mb-2">
-                <input
-                  type="text"
-                  value={expiry}
-                  onChange={(e) => setExpiry(e.target.value)}
-                  placeholder="MM/YY"
-                  className={`border-b w-full sm:w-1/2 px-2 py-1 ${
-                    errors.expiry ? "border-red-500" : "border-gray-400 focus:border-red-400"
-                  }`}
-                />
-                <input
-                  type="text"
-                  value={cvv}
-                  onChange={(e) => /^\d{0,3}$/.test(e.target.value) && setCvv(e.target.value)}
-                  placeholder="CVV"
-                  className={`border-b w-full sm:w-1/2 px-2 py-1 ${
-                    errors.cvv ? "border-red-500" : "border-gray-400 focus:border-red-400"
-                  }`}
-                />
-              </div>
-              <input
-                type="text"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                placeholder="Cardholder Name"
-                className={`border-b w-full px-2 py-1`}
-              />
-            </div>
-          )}
-
-          <div className="flex items-center text-sm text-gray-600 mb-5">
-            <BsShieldLockFill className="text-lg mr-2 text-red-500" />
-            Secure Payment - Your data is encrypted and safe.
-          </div>
-
-          <button
-            disabled={loading}
-            onClick={handleCheckout}
-            className={`w-full ${loading ? "bg-gray-400" : "bg-red-500 hover:bg-red-600"} text-white py-3 rounded-md font-semibold transition`}
-          >
-            {loading ? "Processing..." : "Confirm & Checkout"}
-          </button>
+            )}
+          </section>
         </div>
-      </div>
+
+        {/* Summary */}
+        <aside className="bg-cream border border-[#dfd6cb] rounded-3xl p-7 h-fit sticky top-32 space-y-5">
+          <h2 className="font-fraunces text-2xl">Order summary</h2>
+          <div className="space-y-5 max-h-72 overflow-auto pr-2">
+            {cart.map((item) => {
+              return (
+                <div key={`${item.productId}`} className="flex gap-3">
+                  <Link
+                    href={`/product/${item.productId}`}
+                    className="relative overflow-hidden w-18 h-20 rounded-xl shrink-0"
+                  >
+                    <Image
+                      src={item.productImage}
+                      alt={item.name}
+                      width={500}
+                      height={500}
+                      className="w-full h-full object-cover"
+                    />
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm truncate">{item.name}</p>
+                    <div className="flex items-center gap-5">
+                      <p className="text-sm text-[#5e534a]">
+                        Qty {item.quantity}
+                      </p>
+                      <span className="text-sm text-[#5e534a] bg-[#dfd6cb] px-5 py-1.5 rounded">
+                        {item.selectedOption?.type}
+                      </span>
+                    </div>
+
+                    <div
+                      className={`w-5 h-5 rounded-full border border-[#ff5b4e]`}
+                      style={{
+                        backgroundColor: `${item.selectedColor?.hex}`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-sm font-medium">
+                    {" "}
+                    ৳ {item.quantity * (item.offerPrice || item.regularPrice)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="border-t border-[#dfd6cb] pt-4 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-[#5e534a]">Subtotal</span>
+              <span>৳ {Math.floor(subtotal)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#5e534a]">Shipping</span>
+              <span>{shipping === 0 ? "Free" : `৳ ${shipping}`}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#5e534a]">Tax</span>
+              <span>৳ {Math.floor(tax)}</span>
+            </div>
+            <div className="flex justify-between font-fraunces text-xl pt-2">
+              <span>Total</span>
+              <span>৳ {Math.floor(total)}</span>
+            </div>
+          </div>
+          <button
+            // type="submit"
+            className="w-full bg-[#17100b] text-[#d9d3c7] rounded-full py-3.5 text-sm font-medium hover:bg-[#ff5b4e] transition-colors inline-flex items-center justify-center gap-2"
+          >
+            <Lock className="w-4 h-4" /> Place order
+          </button>
+        </aside>
+      </form>
     </div>
   );
 }
+
+export default page;
