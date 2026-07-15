@@ -7,7 +7,7 @@ function CategoryCard({ cat, index }) {
     <Link
       key={cat._id}
       href={`/category/${cat.name}`}
-      className="group relative aspect-[4/5] rounded-3xl overflow-hidden shadow"
+      className="group relative aspect-4/5 rounded-3xl overflow-hidden shadow"
       style={{ backgroundColor: `${cat?.tone}` }}
     >
       <Image
@@ -17,8 +17,8 @@ function CategoryCard({ cat, index }) {
         height={2500}
         className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-500"
       />
-      
-      <div className="absolute inset-0 bg-gradient-to-t from-[#180f09]/60 via-[#180f09]/10 to-transparent" />
+
+      <div className="absolute inset-0 bg-linear-to-t from-[#180f09]/60 via-[#180f09]/10 to-transparent" />
       <div className="absolute top-4 left-4 text-xs font-medium px-2.5 py-1 rounded-full bg-[#fcf5e9]/90 text-[#180f09]">
         0{index + 1}
       </div>
@@ -26,7 +26,7 @@ function CategoryCard({ cat, index }) {
         <ArrowUpRight className="size-4" />
       </div>
       <div className="absolute bottom-5 left-5 right-5 text-[#fcf5e9]">
-        <h3 className="font-fraunces text-2xl">{cat.title}</h3>        
+        <h3 className="font-fraunces text-2xl">{cat.title}</h3>
       </div>
     </Link>
   );

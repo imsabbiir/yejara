@@ -29,7 +29,9 @@ export async function POST(req) {
       name,
       email,
       hashPassword,
-      role: "customer",
+      phone: "",
+      city: "",
+      zip: "",
       photo: "",
       address: ""
     });

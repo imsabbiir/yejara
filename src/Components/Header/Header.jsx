@@ -17,19 +17,21 @@ const categories = [
   { label: "Jewelry", to: "/subcategory/jewellery" },
 ];
 export function Header() {
-  const router = useRouter()
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { cart } = useCart();
   const { wishlist } = useWishlist();
-const menuRef = useRef(null);
-const submit = (e) => {
+  const menuRef = useRef(null);
+  const submit = (e) => {
     e.preventDefault();
     if (!searchValue.trim()) return;
-    router.push(`/search?searchValue=${encodeURIComponent(searchValue.trim())}`);
+    router.push(
+      `/search?searchValue=${encodeURIComponent(searchValue.trim())}`,
+    );
   };
 
-useEffect(() => {
+  useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -44,26 +46,17 @@ useEffect(() => {
   // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
-      ) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMobileOpen(false);
       }
     }
 
     if (mobileOpen) {
-      document.addEventListener(
-        "mousedown",
-        handleClickOutside,
-      );
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside,
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [mobileOpen, setMobileOpen]);
 
@@ -84,7 +77,7 @@ useEffect(() => {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center gap-6">
+      <div className="max-w-350 mx-auto px-6 py-4 flex items-center gap-6">
         <Link href={"/"} className="">
           <Image
             src={Logo}
@@ -167,8 +160,8 @@ useEffect(() => {
           className={`absolute w-full h-screen inset-0 bg-black/60 backdrop-blur-sm ${mobileOpen ? "" : "hidden"}`}
         ></div>
         <div
-        ref={menuRef}
-          className={`lg:hidden bg-[#fcf6e9] absolute top-0 w-8/10 h-screen  ${mobileOpen ? "right-0" : "-right-[100%]"} transition-all duration-300 ease-in-out`}
+          ref={menuRef}
+          className={`lg:hidden bg-[#fcf6e9] absolute top-0 w-8/10 h-screen  ${mobileOpen ? "right-0" : "-right-full"} transition-all duration-300 ease-in-out`}
         >
           <div className="px-6 py-4 space-y-2">
             <div className="flex justify-end">

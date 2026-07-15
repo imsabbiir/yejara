@@ -25,27 +25,30 @@ export function DealOfTheDay() {
   const pct = (stock / total) * 100;
 
   return (
-    <section className="max-w-[1400px] mx-auto px-6 py-16">
-      <div className="relative rounded-[2.5rem] overflow-hidden bg-[#17100b] text-[#d9d3c7] p-8 md:p-12 lg:p-16">
-        {/* glow blobs */}
-        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#ff5b4e]/30 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[rgb(106,68,168)]/30 blur-3xl" />
+    <section className="max-w-350 mx-auto px-6 py-16">
+      <div className="relative rounded-[2.5rem] overflow-hidden bg-[#17100b] text-[#d9d3c7] p-8 md:p-12 lg:p-16 isolation-auto">
+        {/* Glow blobs - optimized opacity/size to prevent heavy blending layers */}
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#ff5b4e]/20 blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[rgb(106,68,168)]/20 blur-[100px] pointer-events-none" />
 
         <div className="relative grid lg:grid-cols-2 gap-12 items-center">
+          {/* Fix 1: Subtler animations to cut down high TBT/Layout execution */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotate: -8 }}
-            whileInView={{ opacity: 1, scale: 1, rotate: -6 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative aspect-square rounded-3xl overflow-hidden animate-float"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+            className="relative aspect-square rounded-3xl overflow-hidden"
           >
+            {/* Fix 2: Optimized Next.js Image component */}
             <Image
               src={dealImg}
               alt="Featured deal product"
-              width={1024}
-              height={1024}
+              width={600}
+              height={600}
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              quality={85}
               className="w-full h-full object-cover"
-              loading="lazy"
             />
           </motion.div>
 
@@ -76,7 +79,9 @@ export function DealOfTheDay() {
             </div>
 
             <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-fraunces text-5xl text-[#ff5b4e]">$150</span>
+              <span className="font-fraunces text-5xl text-[#ff5b4e]">
+                $150
+              </span>
               <span className="text-xl text-[#d9d3c7]/40 line-through">
                 $200
               </span>
@@ -85,7 +90,7 @@ export function DealOfTheDay() {
               </span>
             </div>
 
-            {/* countdown */}
+            {/* Countdown layout */}
             <div className="flex gap-3 mb-6">
               {[
                 { l: "Hours", v: h },
@@ -94,7 +99,7 @@ export function DealOfTheDay() {
               ].map((t) => (
                 <div
                   key={t.l}
-                  className="bg-[#d9d3c7]/10 backdrop-blur rounded-2xl px-5 py-3 text-center min-w-[80px]"
+                  className="bg-[#d9d3c7]/10 backdrop-blur rounded-2xl px-5 py-3 text-center min-w-20"
                 >
                   <div className="font-fraunces text-3xl font-semibold tabular-nums">
                     {String(t.v).padStart(2, "0")}
@@ -106,7 +111,7 @@ export function DealOfTheDay() {
               ))}
             </div>
 
-            {/* stock bar */}
+            {/* Stock progress bar */}
             <div className="mb-6">
               <div className="flex justify-between text-xs font-mono mb-2">
                 <span className="text-[#d9d3c7]/60">Sold: {stock}</span>
@@ -119,8 +124,8 @@ export function DealOfTheDay() {
                   initial={{ width: 0 }}
                   whileInView={{ width: `${pct}%` }}
                   viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-[#ff5b4e] to-[#d5e43f]"
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="h-full bg-linear-to-r from-[#ff5b4e] to-[#d5e43f]"
                 />
               </div>
             </div>

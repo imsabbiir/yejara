@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 export default function page() {
-    const route = useRouter()
+  const route = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,9 +19,86 @@ export default function page() {
       [e.target.id]: e.target.value,
     }));
   };
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      toast("Please enter your full name.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
 
+    if (formData.name.trim().length < 3) {
+      toast.error("Name must be at least 3 characters.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
+
+    if (!formData.email.trim()) {
+      toast.error("Please enter your email.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
+
+    if (!formData.password) {
+      toast.error("Please enter your password.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters.", {
+        position: "bottom-right",
+        icon: "❌",
+        style: {
+          background: "#17100b",
+          color: "white",
+        },
+      });
+      return false;
+    }
+
+    return true;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setLoading(true);
     setErr("");
 
@@ -37,7 +115,7 @@ export default function page() {
 
       setErr("✅ Account created successfully!");
       setFormData({ name: "", email: "", password: "" });
-      route.push("/login")
+      route.push("/login");
     } catch (error) {
       setErr(`❌ setErr("Something went wrong. Try again later.");`);
     } finally {
@@ -46,12 +124,12 @@ export default function page() {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
+    <div className="max-w-275 mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
       <div className="hidden md:block">
         <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#ff5b4e] mb-3">
           Join yejara
         </p>
-        <h1 className="font-fraunces text-6xl leading-[1] mb-6">
+        <h1 className="font-fraunces text-6xl leading-none mb-6">
           Become
           <br />a member.
         </h1>
@@ -80,8 +158,7 @@ export default function page() {
             id="name"
             onChange={handleChange}
             type="text"
-            placeholder="Your email"
-            required
+            placeholder="Your Name"
             className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
           />
         </div>
@@ -95,7 +172,6 @@ export default function page() {
             onChange={handleChange}
             type="email"
             placeholder="Your email"
-            required
             className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
           />
         </div>
@@ -109,7 +185,6 @@ export default function page() {
             onChange={handleChange}
             type="password"
             placeholder="Password"
-            required
             className="w-full bg-[#f2eadd]/60 rounded-xl px-4 py-3 text-sm outline-none focus:ring focus:ring-[#ff5b4e]"
           />
         </div>

@@ -45,7 +45,6 @@ export function ProductsList() {
   // PAGE CHANGE
   const handlePageChange = (page) => {
     if (page < 1 || page > pagination.pages || page === currentPage) return;
-    z;
 
     getProducts(page);
 

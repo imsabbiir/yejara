@@ -1,10 +1,11 @@
-'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { useCart } from '@/context/CartContext';
-import toast from 'react-hot-toast';
+"use client";
+import React, { useState } from "react";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 const ProductDetails = ({ product }) => {
-  const [selectedColor, setSelectedColor] = useState(product.variants?.colorVariants?.[0]);
+  const [selectedColor, setSelectedColor] = useState(
+    product.variants?.colorVariants?.[0],
+  );
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
 
   const selectedVariant = product.variants?.options?.[selectedVariantIndex];
@@ -16,28 +17,37 @@ const ProductDetails = ({ product }) => {
   const { addToCart, cart } = useCart(); // use the cart context
 
   const handleAddToCart = () => {
-  addToCart({
-    productId: product._id,
-    productImage: product.images?.[0],
-    name: product.productName,
-    category: product.category,
-    regularPrice: selectedVariant?.regularPrice,
-    offerPrice: selectedVariant?.offer?.offerStatus
-      ? selectedVariant.offer.offerPrice
-      : selectedVariant?.regularPrice,
-    categorySlug: product.categorySlug,
-    subCategorySlug: product.subCategorySlug,
-    selectedColor,
-    selectedVariant: selectedVariant?.type,
-  });
+    addToCart({
+      productId: product._id,
+      productImage: product.images?.[0],
+      name: product.productName,
+      category: product.category,
+      regularPrice: selectedVariant?.regularPrice,
+      offerPrice: selectedVariant?.offer?.offerStatus
+        ? selectedVariant.offer.offerPrice
+        : selectedVariant?.regularPrice,
+      categorySlug: product.categorySlug,
+      subCategorySlug: product.subCategorySlug,
+      selectedColor,
+      selectedVariant: selectedVariant?.type,
+    });
 
-  toast.success('Product added to cart!');
-};
+    toast("Product is added in Cart", {
+      position: "bottom-right",
+      style: {
+        background: "#17100b",
+        color: "#007a56",
+      },
+      icon: "✅",
+    });
+  };
 
   return (
     <div className="w-full max-w-xl">
       {/* Product Title */}
-      <h1 className="text-3xl font-semibold mb-2 text-[#333]">{product.productName}</h1>
+      <h1 className="text-3xl font-semibold mb-2 text-[#333]">
+        {product.productName}
+      </h1>
 
       {/* Description */}
       <p className="text-gray-500 mb-4">{product.description}</p>
@@ -67,8 +77,8 @@ const ProductDetails = ({ product }) => {
               key={index}
               className={`h-8 w-8 rounded-full border-2 cursor-pointer transition ${
                 selectedColor === color
-                  ? 'ring-2 ring-[#ff8f9c] border-[#ff8f9c]'
-                  : 'border-gray-300 hover:border-red-400'
+                  ? "ring-2 ring-[#ff8f9c] border-[#ff8f9c]"
+                  : "border-gray-300 hover:border-red-400"
               }`}
               style={{ backgroundColor: color }}
               onClick={() => setSelectedColor(color)}
@@ -88,8 +98,8 @@ const ProductDetails = ({ product }) => {
               onClick={() => setSelectedVariantIndex(index)}
               className={`px-3 py-1 rounded-full text-sm font-medium cursor-pointer border transition ${
                 selectedVariantIndex === index
-                  ? 'bg-[#ff8f9c] text-white border-[#ff8f9c]'
-                  : 'bg-red-100 text-[#ff8f9c] hover:bg-red-200 border-red-200'
+                  ? "bg-[#ff8f9c] text-white border-[#ff8f9c]"
+                  : "bg-red-100 text-[#ff8f9c] hover:bg-red-200 border-red-200"
               }`}
             >
               {variant.type}

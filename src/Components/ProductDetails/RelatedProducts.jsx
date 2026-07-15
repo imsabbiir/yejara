@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import RelatedProductCard from "../Cards/RelatedProductCard";
 import { Card } from "../Cards/Card";
 
 export default function RelatedProducts({ productId }) {

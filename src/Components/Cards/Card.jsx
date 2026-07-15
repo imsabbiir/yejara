@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 export function Card({
   productId,
   name,
@@ -26,7 +27,7 @@ export function Card({
   );
   const regularPrice = selectedOption?.regularPrice;
   const offerPrice = selectedOption?.offer?.offerPrice;
-  const productImage = productImages[0]
+  const productImage = productImages[0];
   const total = productImages?.length || 0;
   const prev = (e) => {
     e.stopPropagation();
@@ -47,6 +48,14 @@ export function Card({
       variants,
       subCategorySlug,
     });
+    toast("Product is added in Wishlist", {
+      position: "bottom-right",
+      style: {
+        background: "#17100b",
+        color: "#007a56",
+      },
+      icon: "✅",
+    });
   };
   const handleAddCart = () => {
     addToCart({
@@ -59,6 +68,14 @@ export function Card({
       regularPrice,
       offerPrice,
       subCategorySlug,
+    });
+    toast("Product is added in Cart", {
+      position: "bottom-right",
+      style: {
+        background: "#17100b",
+        color: "#007a56",
+      },
+      icon: "✅",
     });
   };
   return (
@@ -77,7 +94,7 @@ export function Card({
               alt={`${name} ${i + 1}`}
               width={2500}
               height={2500}
-              className="h-full w-full object-cover flex-shrink-0"
+              className="h-full w-full object-cover shrink-0"
               loading="lazy"
             />
           ))}
@@ -131,11 +148,19 @@ export function Card({
 
       {/* CONTENT */}
       <div className="p-4 flex-1 flex flex-col">
-        <Link href={`/subcategory/${subCategorySlug}`} className="text-[10px] tracking-[0.2em] text-[#6A6154]">
+        <Link
+          href={`/subcategory/${subCategorySlug}`}
+          className="text-[10px] tracking-[0.2em] text-[#6A6154]"
+        >
           {subCategory?.toUpperCase()}
         </Link>
 
-        <Link href={`/product/${productId}`} className="text-sm font-medium mt-1 line-clamp-1">{name}</Link>
+        <Link
+          href={`/product/${productId}`}
+          className="text-sm font-medium mt-1 line-clamp-1"
+        >
+          {name}
+        </Link>
 
         {/* COLORS + VARIANTS */}
         <div className="mt-3 flex items-center gap-2 flex-wrap">

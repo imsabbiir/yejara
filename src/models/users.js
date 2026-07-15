@@ -7,30 +7,52 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     email: {
       type: String,
       required: true,
       unique: true,
     },
+
     hashPassword: {
       type: String,
       required: true,
     },
-    role: {
+
+    phone: {
       type: String,
-      default: "customer",
     },
+
+    city: {
+      type: String,
+    },
+
+    zip: {
+      type: String,
+    },
+
     photo: {
       type: String,
       default: "",
     },
+
     address: {
       type: String,
       default: "",
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+
+    resetPasswordExpire: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
+
 export default User;

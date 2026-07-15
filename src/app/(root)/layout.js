@@ -1,13 +1,12 @@
-import Footer from "@/components/Footer/Footer";
-import { Newsletter, SiteFooter } from "@/components/Footer/Footer";
+import { SiteFooter } from "@/components/Footer/Footer";
+import Newsletter from "@/components/Footer/Newsletter";
 import { Header } from "@/components/Header/Header";
 
 import React from "react";
-import { Toaster } from "react-hot-toast";
 
 function layout({ children }) {
   return (
-    <div className="bg-[#fff] min-h-screen w-full overflow-hidden">
+    <div className="bg-white min-h-screen w-full overflow-hidden">
       {/* header section */}
       <Header />
       {/* main section */}
@@ -17,7 +16,6 @@ function layout({ children }) {
         <Newsletter />
         <SiteFooter />
       </>
-      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }

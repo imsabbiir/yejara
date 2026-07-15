@@ -1,22 +1,39 @@
 import dbConnect from "@/lib/mongoose";
+import Product from "@/models/products";
 import { NextResponse } from "next/server";
-import Products from "@/models/products";
 
-export async function GET(request, { params }) {
-  const { slug } = params;
-
+export async function GET(req, { params }) {
   try {
     await dbConnect();
 
-    const products = await Products.find({ categorySlug: slug }).lean();
+    const { slug } = params;
 
-    return NextResponse.json(products, { status: 200 });
+    const { searchParams } = new URL(req.url);
+
+    const page = Number(searchParams.get("page")) || 1;
+    const limit = Number(searchParams.get("limit")) || 9;
+
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({
+      categorySlug: slug,
+    })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await Product.countDocuments({
+      categorySlug: slug,
+    });
+
+    return NextResponse.json({
+      products,
+      hasMore: skip + products.length < total,
+    });
   } catch (error) {
-    console.error("Error fetching category products:", error);
-
     return NextResponse.json(
-      { message: "Failed to fetch category products" },
-      { status: 500 }
+      { message: error.message },
+      { status: 500 },
     );
   }
 }

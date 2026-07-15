@@ -1,14 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-const cardStyle = {
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+
+import { forwardRef, useImperativeHandle, useEffect, useState } from "react";
+
+const elementStyle = {
   style: {
     base: {
+      color: "#5e534a",
       fontSize: "16px",
-      color: "#0f172b",
+      fontFamily: "Inter, sans-serif",
       "::placeholder": {
-        color: "#94a3b8",
+        color: "#a1a1aa",
       },
     },
     invalid: {
@@ -16,50 +25,100 @@ const cardStyle = {
     },
   },
 };
-export default function CheckoutForm({ total }) {
+
+const CheckoutForm = forwardRef(({ total }, ref) => {
   const stripe = useStripe();
   const elements = useElements();
-
+  const [loadingIntent, setLoadingIntent] = useState(true);
   const [clientSecret, setClientSecret] = useState("");
 
+  // create payment intent
   useEffect(() => {
+    if (!total) return;
+
+    setLoadingIntent(true);
+
     fetch("/api/create-payment-intent", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ amount: total }),
     })
       .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
+      .then((data) => {
+        setClientSecret(data.clientSecret);
+      })
+      .finally(() => setLoadingIntent(false));
   }, [total]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // expose function to parent (NO UI CHANGE)
+  useImperativeHandle(ref, () => ({
+    async submitPayment() {
+      if (!stripe || !elements) {
+        return { success: false, message: "Stripe not ready" };
+      }
 
-    if (!stripe || !elements) return;
+      if (!clientSecret) {
+        alert("Payment is still loading. Try again in 2 seconds.");
+        return;
+      }
 
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-      },
-    });
+      const cardElement = elements.getElement(CardNumberElement);
 
-    if (result.error) {
-      alert(result.error.message);
-    } else if (result.paymentIntent.status === "succeeded") {
-      alert("Payment Successful ✅");
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+          },
+        },
+      );
 
-      // 👉 HERE call your order API
-    }
-  };
+      if (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+
+      if (paymentIntent?.status === "succeeded") {
+        return {
+          success: true,
+          paymentIntent,
+        };
+      }
+
+      return {
+        success: false,
+        message: "Payment failed",
+      };
+    },
+  }));
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <CardElement options={cardStyle} />
-      <button
-        type="submit"
-        className="bg-[#0f172b] text-white items-center justify-center gap-2 whitespace-nowrap text-sm font-medium shadow hover:bg-[#0f172b]/90 h-10 rounded-md px-8 w-full cursor-pointer transition-all duration-200 ease-in-out"
-      >
-        Pay ৳{total}
-      </button>
-    </form>
+    <div className="space-y-3">
+      <div className="space-y-4">
+        {/* Card Number */}
+        <div className="border border-[#dfd6cb] rounded-full bg-white px-4 py-3">
+          <CardNumberElement options={elementStyle} />
+        </div>
+
+        {/* Expiry + CVC */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="border border-[#dfd6cb] rounded-full bg-white px-4 py-3">
+            <CardExpiryElement options={elementStyle} />
+          </div>
+
+          <div className="border border-[#dfd6cb] rounded-full bg-white px-4 py-3">
+            <CardCvcElement options={elementStyle} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+});
+
+CheckoutForm.displayName = "CheckoutForm";
+
+export default CheckoutForm;
