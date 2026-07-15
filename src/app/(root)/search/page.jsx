@@ -29,7 +29,7 @@ function Page() {
       try {
         const categoryRes = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories`,
-          { cache: "no-store" }
+          { cache: "no-store" },
         );
 
         const categoriesData = await categoryRes.json();
@@ -54,7 +54,7 @@ function Page() {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `/api/search?searchValue=${encodeURIComponent(searchValue)}`
+          `/api/search?searchValue=${encodeURIComponent(searchValue)}`,
         );
 
         const data = await res.json();
@@ -72,7 +72,7 @@ function Page() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-12">
+    <div className="max-w-350 mx-auto px-6 py-12">
       <p className="text-xs font-mono uppercase tracking-[0.3em] text-[#ff5b4e] mb-2">
         Universe search
       </p>
